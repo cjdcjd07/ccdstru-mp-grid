@@ -5,7 +5,7 @@
 
 int main ()
 {
-    GameState *game;
+    GameState game;
     int r = 0;
     int c = 0;
     int nGrid = 1; // Loop control flag

@@ -47,7 +47,7 @@ int Count(int set[4][4])
 
     for (i = 1; i <= 3; i++)
     {
-        for (j = 1; j < = 3; j++)
+        for (j = 1; j <= 3; j++)
         {
             if (set[i][j])
             {
