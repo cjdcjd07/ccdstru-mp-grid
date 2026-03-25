@@ -30,12 +30,33 @@ void UpdateFacts(GameState *state)
 
 int IsValid(int a, int b)
 {
+    int valid = 0;
 
+    if (a >= 1 && a <= 3 && b >= 1 && b <= 3)
+    {
+        valid = 1;
+    }
+
+    return valid;
 }
 
 int Count(int set[4][4])
 {
+    int c = 0;
+    int i, j;
 
+    for (i = 1; i <= 3; i++)
+    {
+        for (j = 1; j < = 3; j++)
+        {
+            if (set[i][j])
+            {
+                c++;
+            }
+        }
+    }
+
+    return c;
 }
 
 void RemovePiece(GameState *state, int a, int b)
