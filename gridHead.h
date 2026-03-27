@@ -18,8 +18,6 @@ typedef struct
     int found;
     int start;
     int val;
-
-    char result[7]; 
 } GameStatus;
 
 // Function prototypes
@@ -31,6 +29,7 @@ void Remove(GameStatus* game, int a, int b);
 void Replace(GameStatus* game, int a, int b);
 void Expand(GameStatus* game, int a, int b);
 void Update(GameStatus* game, int a, int b);
+int isOver(GameStatus *game);
 void NextPlayerMove(GameStatus* game, int a, int b);
 void GameOver(GameStatus* game);
 void DisplayBoard(GameStatus *game);

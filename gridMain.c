@@ -1,4 +1,5 @@
 #include "gridHead.h"
+#include "gridFun.c"
 
 int main ()
 {

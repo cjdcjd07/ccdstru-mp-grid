@@ -94,7 +94,8 @@ void Replace(GameStatus *game, int a, int b)
         }
         else if (game->S[a][b] && !game->T[a][b])
         {
-            game->T[a][b] = 1; 
+            game->T[a][b] = 1;
+            game->found = 0;
             Expand(game, a, b);
         }
             
@@ -134,6 +135,24 @@ void Update(GameStatus *game, int a, int b)
     }
 }
 
+
+int isOver(GameStatus *game)
+{
+    int n; // Bool to be returned
+    int sizeR = Count(game->R);
+    int sizeB = Count(game->B);
+    int isFull = (9 - (sizeR + sizeB) == 3);
+    int elimination = (!game->start && ((sizeR > 0 && sizeB == 0) || (sizeR == 0 && sizeB > 0)));
+
+    if (isFull || game->val >= 20 || elimination)
+        n = 1; // Game over...
+    else    
+        n = 0; // Game is ON
+
+    return n;
+}
+
+
 void NextPlayerMove(GameStatus *game, int a, int b)
 {
     int sizeR; 
@@ -149,9 +168,8 @@ void NextPlayerMove(GameStatus *game, int a, int b)
         game->S[a][b] = 1; 
         game->good = 1; 
     }
-
     /* Normal */
-    if (!game->over && !game->start )
+    else if (!game->over && !game->start )
     {
         if ((game->go && game->R[a][b]) || (!game->go && game->B[a][b]))
         {
@@ -168,31 +186,12 @@ void NextPlayerMove(GameStatus *game, int a, int b)
 
     if (!game->over && game->good)
     {
-        game->good = !game->good;
+        game->good = 0;
         game->go = !game->go; 
         game->val++; 
     }
-}
 
-
-int isOver(GameStatus *game)
-{
-    int n; // Bool to be returned
-    int sizeR = Count(game->R);
-    int sizeB = Count(game->B);
-    int sizeM = 9;
-    int isFull = (sizeR + sizeB == sizeM ) 3; // F = M - (R union B).
-    
-    
-    
-    int elimination = (!game->start && ((sizeR > 0 && sizeB == 0) || (sizeR == 0 && sizeB > 0)));
-
-    if (isFull || game->val >= 20 || elimination)
-        n = 1; // Game over...
-    else    
-        n = 0; // Game is ON
-
-    return n;
+    game->over = isOver(game);
 }
 
 
