@@ -1,53 +1,36 @@
 #include "gridHead.h"
 
-void InitSystem(GameState *state)
+void InitSystem(GameStatus *game)
 {
-    memset(state, 0, sizeof(GameState));
-    state->good = 0;
-    state->go = 1;
-    state->start = 1;
-    state->found = 1;
-    state->val = 0;
-    state->over = 0;
-}
+    int i, j;
 
-void UpdateFacts(GameState *state)
-{
-    int r_count = Count(state->R);
-    int b_count = Count(state->B);
-    int f_count = 9 - (r_count + b_count);
+    game->good = 0;
+    game->go = 1;
+    game->start = 1;
+    game->found = 0;
+    game->val = 0;
+    game->over = 0;
 
-    if (f_count == 0 || state->val >= 20 || (!state->start && 
-       ((r_count > 0 && b_count == 0) || (r_count == 0 && b_count > 0))))
+    for (i = 0; i < 3; i++)
     {
-        state->over = 1;
-    }
-    else
-    {
-        state->over = 0;
+        for (j = 0; j < 3; j++)
+        {
+            game->R[i][j] = 0;
+            game->B[i][j] = 0;
+            game->S[i][j] = 0;
+            game->T[i][j] = 0;
+        }
     }
 }
 
-int IsValid(int a, int b)
-{
-    int valid = 0;
-
-    if (a >= 1 && a <= 3 && b >= 1 && b <= 3)
-    {
-        valid = 1;
-    }
-
-    return valid;
-}
-
-int Count(int set[4][4])
+int Count(int set[3][3])
 {
     int c = 0;
     int i, j;
 
-    for (i = 1; i <= 3; i++)
+    for (i = 0; i <= 2; i++)
     {
-        for (j = 1; j <= 3; j++)
+        for (j = 0; j <= 2; j++)
         {
             if (set[i][j])
             {
@@ -59,31 +42,195 @@ int Count(int set[4][4])
     return c;
 }
 
-void RemovePiece(GameState *state, int a, int b)
+void Remove(GameStatus *game, int a, int b)
 {
+    if(game->go)
+        game->R[a][b] = 0; 
+    else
+        game->B[a][b] = 0;
 
+    game->S[a][b] = 0;
+    game->T[a][b] = 0;
 }
 
-void Replace(GameState *state, int a, int b)
+void Replace(GameStatus *game, int a, int b)
 {
+    game->found = 0;
 
+    /* Red */
+    if (game->go)
+    {
+        if(game->B[a][b])
+            {
+                game->B[a][b] = 0; 
+                game->found = 1; 
+            }
+        else if(game->R[a][b])
+            game->found = 1; 
+        else 
+            game->R[a][b] = 1;
+    } 
+
+    /* Blue */
+    else
+    {
+        if(game->R[a][b])
+            {
+                game->R[a][b] = 0; 
+                game->found = 1; 
+            }
+        else if(game->B[a][b])
+            game->found = 1; 
+        else 
+            game->B[a][b] = 1;
+    }
+
+    if (game->found)
+    {
+        if (!game->S[a][b])
+        {
+            game->S[a][b] = 1; 
+            game->found = 0; 
+        }
+        else if (game->S[a][b] && !game->T[a][b])
+        {
+            game->T[a][b] = 1; 
+            Expand(game, a, b);
+        }
+            
+    }
 }
 
-void Expand(GameState *state, int a, int b)
-{
 
+void Expand(GameStatus *game, int a, int b)
+{
+    Remove(game, a, b);
+
+    if (game->go && a > 0)
+        Replace(game, a-1, b); // u = (a-1, b)
+    else if (!game->go && a < 2)
+        Replace(game, a+1, b); // d = (a+1, b)
+    
+    if (b > 0)
+        Replace(game, a, b-1); // k = (a, b-1)
+    if (b < 2)
+        Replace(game, a, b+1); // r = (a, b+1)
 }
-void Update(GameState *state, int a, int b)
-{
 
+void Update(GameStatus *game, int a, int b)
+{
+    game->good = 0;
+
+    if (!game->S[a][b])
+    {
+        game->S[a][b] = 1; 
+        game->good = !game->good; 
+    }
+
+    if (!game->good && game->S[a][b] && !game->T[a][b])
+    {
+        game->T[a][b] = 1; 
+        Expand(game, a, b);
+    }
 }
 
-void NextPlayerMove(GameState *, int a, int b)
+void NextPlayerMove(GameStatus *game, int a, int b)
 {
+    int sizeR; 
+    int sizeB; 
+    
+    /* Start Only */
+    if (!game->over && game->start)
+    {   
+        if (game->go)  
+            game->R[a][b] = 1; 
+        else 
+            game->B[a][b] = 1; 
+        game->S[a][b] = 1; 
+        game->good = 1; 
+    }
 
+    /* Normal */
+    if (!game->over && !game->start )
+    {
+        if ((game->go && game->R[a][b]) || (!game->go && game->B[a][b]))
+        {
+            Update(game, a, b); 
+            game->good = 1; 
+        }
+    }
+
+    sizeR = Count(game->R);
+    sizeB = Count(game->B);
+
+    if (game->start && sizeR == 1 && sizeB == 1)
+        game->start = 0; 
+
+    if (!game->over && game->good)
+    {
+        game->good = !game->good;
+        game->go = !game->go; 
+        game->val++; 
+    }
 }
 
-void GameOver(GameState *state)
-{
 
+int isOver(GameStatus *game)
+{
+    int n; // Bool to be returned
+    int sizeR = Count(game->R);
+    int sizeB = Count(game->B);
+    int sizeM = 9;
+    int isFull = (sizeR + sizeB == sizeM ) 3; // F = M - (R union B).
+    
+    
+    
+    int elimination = (!game->start && ((sizeR > 0 && sizeB == 0) || (sizeR == 0 && sizeB > 0)));
+
+    if (isFull || game->val >= 20 || elimination)
+        n = 1; // Game over...
+    else    
+        n = 0; // Game is ON
+
+    return n;
+}
+
+
+void GameOver(GameStatus *game)
+{
+    int sizeR = Count(game->R); 
+    int sizeB = Count(game->B);; 
+    char result[3][7] = {"R Wins", "B Wins", "Draw"}; 
+    game->over = 1; 
+
+    if(sizeR > sizeB)
+        printf("%s%s%s\n", RED, result[0], RST);
+    else if (sizeR < sizeB)
+        printf("%s%s%s\n", BLU, result[1], RST); 
+    else if (sizeR == sizeB)
+        printf("%s%s%s\n", YLW, result[2], RST);
+}
+
+
+void DisplayBoard(GameStatus *game)
+{
+    int i, j; 
+
+    printf("\n    1  2  3\n");
+    printf("  +--------\n");
+       
+    for (i = 1; i <= 3; i++)
+    {
+        printf("%d |", i);
+        for(j = 1; j <= 3; j++)
+        {
+            if (game->R[i-1][j-1])
+                printf(" %sR%s", RED, RST);
+            else if (game->B[i-1][j-1])
+                printf(" %sB%s", BLU, RST);
+            else
+                printf(" X");
+        }
+        printf("\n");
+    }
 }

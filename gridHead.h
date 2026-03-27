@@ -1,15 +1,16 @@
-#ifndef GAME_H
-#define GAME_H
-
 #include <stdio.h>
-#include <string.h>
+
+#define RED "\x1b[31m"
+#define BLU "\x1b[34m"
+#define YLW "\x1b[33m"
+#define RST "\x1b[0m"
 
 typedef struct 
 {
-    int R[4][4];
-    int B[4][4];
-    int S[4][4];
-    int T[4][4];
+    int R[3][3];
+    int B[3][3];
+    int S[3][3];
+    int T[3][3];
 
     int good;
     int go;
@@ -17,20 +18,19 @@ typedef struct
     int found;
     int start;
     int val;
-} GameState;
+
+    char result[7]; 
+} GameStatus;
 
 // Function prototypes
 
-void InitSystem(GameState* state);
-void UpdateFacts(GameState* state);
-int IsValid(int a, int b);
-int Count(int set[4][4]);
+void InitSystem(GameStatus* game);
+int Count(int set[3][3]);
 
-void RemovePiece(GameState* state, int a, int b);
-void Replace(GameState* state, int a, int b);
-void Expand(GameState* state, int a, int b);
-void Update(GameState* state, int a, int b);
-void NextPlayerMove(GameState* state, int a, int b);
-void GameOver(GameState* state);
-
-#endif
+void Remove(GameStatus* game, int a, int b);
+void Replace(GameStatus* game, int a, int b);
+void Expand(GameStatus* game, int a, int b);
+void Update(GameStatus* game, int a, int b);
+void NextPlayerMove(GameStatus* game, int a, int b);
+void GameOver(GameStatus* game);
+void DisplayBoard(GameStatus *game);
