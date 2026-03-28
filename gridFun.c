@@ -101,7 +101,7 @@ void Replace(GameStatus *game, int a, int b)
 {
     game->found = 0;
 
-    /* Red's Turn */
+    /* R's Turn */
     if (game->go)
     {
         if(game->B[a][b])
@@ -115,7 +115,7 @@ void Replace(GameStatus *game, int a, int b)
             game->R[a][b] = 1;
     } 
 
-    /* Blue's Turn */
+    /* B's Turn */
     else
     {
         if(game->R[a][b])
@@ -247,12 +247,20 @@ void NextPlayerMove(GameStatus *game, int a, int b)
     /* Start Only Mode */
     if (!game->over && game->start)
     {   
-        if (game->go)  
+        if ((game->go && game->B[a][b]) || (!game->go && game->R[a][b]))
+        {
+            printf("ERROR: Position already occupied.\n");
+        }
+        else
+        {
+            if (game->go)  
             game->R[a][b] = 1; 
-        else 
-            game->B[a][b] = 1; 
-        game->S[a][b] = 1; 
-        game->good = 1; 
+            else 
+                game->B[a][b] = 1; 
+            game->S[a][b] = 1; 
+            game->good = 1; 
+        }
+        
     }
     /* !Start or Normal Mode*/
     else if (!game->over && !game->start )
