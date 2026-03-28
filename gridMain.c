@@ -1,4 +1,13 @@
-#include "gridHead.h"
+/**
+* Description : This is the main() file of a modified chain-
+*   reaction game made for our CCSDTRU course in term 2. 
+*   The game consists of a 3x3 board with players R and 
+*   B. 
+* Author/s : PIELAGO, JAMES & DIZON, CARL JOHN
+* Section : S11 (New Section)
+* Last Modified : March 28, 2026
+*/
+
 #include "gridFun.c"
 
 int main ()
@@ -6,21 +15,21 @@ int main ()
     GameStatus game;
     int usrR = 0; // Stores user's input for row 
     int usrC = 0; // Stores user's input for column
-
+ 
     InitSystem(&game);
 
-    printf("===============================\n");
-    printf(" DSTRU GRID BY DIZON & PIELAGO \n");
-    printf("===============================\n");
+    printf("====================================\n");
+    printf(GRN"   DSTRU CHAIN BY DIZON & PIELAGO   \n"RST);
+    printf("====================================\n");
     
     while (!game.over)
     {
         DisplayBoard(&game);
 
         if (game.go)
-            printf("[%sR%s] Enter position (row, column): \n", RED, RST);
+            printf("[%sR%s] Enter position (row, column): ", REDBG, RST);
         else
-            printf("[%sB%s] Enter position (row, column): \n", BLU, RST);
+            printf("[%sB%s] Enter position (row, column): ", BLUBG, RST);
 
         scanf("%d %d", &usrR, &usrC);
         usrR--;
@@ -44,3 +53,15 @@ int main ()
 
     return 0;
 }
+
+/**
+* This is to certify that this project is our own work, based on our personal
+* efforts in studying and applying the concepts learned. We have constructed the
+* functions and their respective algorithms and corresponding code by ourselves.
+* The program was run, tested, and debugged by our own efforts. We further certify
+* that we have not copied in part or whole or otherwise plagiarized the work of
+* other students and/or persons.
+*
+* PIELAGO, JAMES (DLSU ID# 12524301)
+* DIZON, CARL JOHN (DLSU ID# 12504130)
+*/
