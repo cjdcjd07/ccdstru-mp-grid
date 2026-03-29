@@ -1,11 +1,11 @@
 /**
  * Description : This is the function file of a modified 
- *   chain-reaction game made for our CCSDTRU course in 
+ *   chain-reaction game made for our CCDSTRU course in 
  *   term 2. The game consists of a 3x3 board with players
  *   R and B. 
  * Author/s : PIELAGO, JAMES & DIZON, CARL JOHN
  * Section : S11 (New Section)
- * Last Modified : March 28, 2026
+ * Last Modified : March 29, 2026
 */
 
 #include "gridHead.h"
@@ -79,9 +79,13 @@ int Count(int set[3][3])
 void Remove(GameStatus *game, int a, int b)
 {
     if(game->go)
+    {
         game->R[a][b] = 0; 
+    }
     else
+    {
         game->B[a][b] = 0;
+    }
 
     game->S[a][b] = 0;
     game->T[a][b] = 0;
@@ -105,28 +109,36 @@ void Replace(GameStatus *game, int a, int b)
     if (game->go)
     {
         if(game->B[a][b])
-            {
-                game->B[a][b] = 0; 
-                game->found = 1; 
-            }
-        else if(game->R[a][b])
+        {
+            game->B[a][b] = 0; 
             game->found = 1; 
+        }
+        else if(game->R[a][b])
+        {
+            game->found = 1; 
+        }
         else 
+        {
             game->R[a][b] = 1;
+        }
     } 
 
     /* B's Turn */
     else
     {
         if(game->R[a][b])
-            {
-                game->R[a][b] = 0; 
-                game->found = 1; 
-            }
-        else if(game->B[a][b])
+        {
+            game->R[a][b] = 0; 
             game->found = 1; 
+        }
+        else if(game->B[a][b])
+        {
+            game->found = 1; 
+        }
         else 
+        {
             game->B[a][b] = 1;
+        }
     }
 
     /* Updates S and T. Expands if condition is met. */
@@ -161,14 +173,24 @@ void Expand(GameStatus *game, int a, int b)
     Remove(game, a, b);
 
     if (game->go && a > 0)
+    {
         Replace(game, a-1, b); // u = (a-1, b)
+    }
+
     else if (!game->go && a < 2)
+    {
         Replace(game, a+1, b); // d = (a+1, b)
+    }
     
     if (b > 0)
+    {
         Replace(game, a, b-1); // k = (a, b-1)
+    }
+
     if (b < 2)
+    {
         Replace(game, a, b+1); // r = (a, b+1)
+    }
 }
 
 /**
@@ -214,16 +236,25 @@ int isOver(GameStatus *game)
     int sizeR = Count(game->R);
     int sizeB = Count(game->B);
     int isFull = (9 - (sizeR + sizeB) == 3);
-    int isElimd = (!game->start && ((sizeR > 0 && sizeB == 0) || (sizeR == 0 && sizeB > 0))); // isEliminated
+    int isEliminated = (!game->start && ((sizeR > 0 && sizeB == 0) || 
+                       (sizeR == 0 && sizeB > 0))); // isEliminated
 
-    if (isElimd)
+    if (isEliminated)
+    {
         n = 1; // Game over by eliminated...
+    }
     else if (isFull)
+    {
         n = 2; // Game over by 3-nodes-remaining rule...
+    }
     else if (game->val >= 20)
+    {
         n = 3; // Game over by max turns...
+    }
     else 
+    {
         n = 0; // Game is ON!
+    }
 
     return n;
 }
@@ -253,10 +284,15 @@ void NextPlayerMove(GameStatus *game, int a, int b)
         }
         else
         {
-            if (game->go)  
-            game->R[a][b] = 1; 
+            if (game->go)
+            {
+                game->R[a][b] = 1; 
+            }
             else 
+            {
                 game->B[a][b] = 1; 
+            }
+
             game->S[a][b] = 1; 
             game->good = 1; 
         }
@@ -270,13 +306,20 @@ void NextPlayerMove(GameStatus *game, int a, int b)
             Update(game, a, b); 
             game->good = 1; 
         }
+
+        else
+        {
+            printf("ERROR: You can only select your own nodes!\n");
+        }
     }
 
     sizeR = Count(game->R);
     sizeB = Count(game->B);
 
     if (game->start && sizeR == 1 && sizeB == 1)
+    {
         game->start = 0; 
+    }
 
     if (!game->over && game->good)
     {
@@ -318,11 +361,17 @@ void GameOver(GameStatus *game)
     }
 
     if(sizeR > sizeB)
+    {
         printf("%s%s%s\n", RED, result[0], RST);
+    }
     else if (sizeR < sizeB)
+    {
         printf("%s%s%s\n", BLU, result[1], RST); 
+    }
     else if (sizeR == sizeB)
+    {
         printf("%s%s%s\n", YLW, result[2], RST);
+    }
 }
 
 /**
@@ -336,7 +385,10 @@ void GameOver(GameStatus *game)
 void DisplayBoard(GameStatus *game)
 {
     int i, j; 
-    printf("\nTurn #%d (%d Left)\n", game->val, 21-game->val); // Note that the current turn is INCLUDED in the remaining turns
+
+    // Note that the current turn is INCLUDED in the remaining turns
+    printf("\nTurn #%d (%d Left)\n", game->val, 21-game->val); 
+
     printf("    1 2 3\n");
     printf("  +-------\n");
        
@@ -346,12 +398,19 @@ void DisplayBoard(GameStatus *game)
         for(j = 1; j <= 3; j++)
         {
             if (game->R[i-1][j-1])
+            {
                 printf(" %sR%s", RED, RST);
-            else if (game->B[i-1][j-1])
+            }
+            else if (game->B[i - 1][j - 1])
+            {
                 printf(" %sB%s", BLU, RST);
+            }
             else
+            {
                 printf(" X");
+            }
         }
+
         printf("\n");
     }
 }

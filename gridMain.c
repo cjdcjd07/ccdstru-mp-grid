@@ -19,7 +19,7 @@ int main ()
     InitSystem(&game);
 
     printf("====================================\n");
-    printf(GRN"   DSTRU CHAIN BY DIZON & PIELAGO   \n"RST);
+    printf(GRN"    DSTRU CHAIN BY DIZON & PIELAGO   \n"RST);
     printf("====================================\n");
     
     while (!game.over)
@@ -27,9 +27,13 @@ int main ()
         DisplayBoard(&game);
 
         if (game.go)
+        {
             printf("[%sR%s] Enter position (row, column): ", REDBG, RST);
+        }
         else
+        {
             printf("[%sB%s] Enter position (row, column): ", BLUBG, RST);
+        }
 
         scanf("%d %d", &usrR, &usrC);
         usrR--;
@@ -41,7 +45,9 @@ int main ()
             NextPlayerMove(&game, usrR, usrC);
         }
         else
+        {
             printf("%sInvalid input (only 1-3)%s. Try again.\n", RED, RST);
+        }
     }
 
     if (game.over)
