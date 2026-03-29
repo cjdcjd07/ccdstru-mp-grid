@@ -1,11 +1,10 @@
 /**
  * Description : This is the function file of a modified 
- *   chain-reaction game made for our CCDSTRU course in 
- *   term 2. The game consists of a 3x3 board with players
- *   R and B. 
- * Author/s : PIELAGO, JAMES & DIZON, CARL JOHN
+ * chain-reaction game made for our CCDSTRU course in 
+ * Term 2. The game consists of a 3x3 board with players R and B. 
+ * Author/s: PIELAGO, JAMES & DIZON, CARL JOHN
  * Section : S11 (New Section)
- * Last Modified : March 29, 2026
+ * Last Modified : March 30, 2026
 */
 
 #include "gridHead.h"
